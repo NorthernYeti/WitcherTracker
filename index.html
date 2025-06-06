@@ -14,51 +14,45 @@
 <div class="">
     <h1>Witcher combat tracker</h1>
     <form>
-        <label for="abonus">Attacker bonus:</label><br>
-        <input type="text" id="abonus" name="abonus" value="17"><br>
-        <label for="damage">Damage:</label><br>
-        <input type="text" id="damage" name="damage" value="4d6+2"><br>
-        <label for="dbonus">Defender bonus:</label><br>
-        <input type="text" id="dbonus" name="dbonus" value="15"><br>
-        <label for="armor">Armor SP:</label><br>
-        <input type="text" id="armor" name="armor" value="11"><br>
-        <label for="hp">HP:</label><br>
-        <input type="text" id="hp" name="hp" value="40"><br>
-        <fieldset>
-            <legend>Target location:</legend>
-          
-            <div>
-              <input type="radio" id="none" name="hit_location" value="none" checked />
-              <label for="none">None</label>
-            </div>
-            <div>
-              <input type="radio" id="head" name="hit_location" value="head" />
-              <label for="head">Head</label>
-            </div>
-            <div>
-              <input type="radio" id="torse" name="hit_location" value="torse" />
-              <label for="torse">Torso</label>
-            </div>
-            <div>
-                <input type="radio" id="rarm" name="hit_location" value="rarm" />
-                <label for="rarm">Right Arm</label>
-            </div>
-            <div>
-                <input type="radio" id="larm" name="hit_location" value="larm" />
-                <label for="larm">Left Arm</label>
-            </div>
-            <div>
-                <input type="radio" id="rleg" name="hit_location" value="rleg" />
-                <label for="rleg">Right Leg</label>
-            </div>
-            <div>
-                <input type="radio" id="lleg" name="hit_location" value="lleg" />
-                <label for="lleg">Left Leg</label>
-            </div>
-            
-          </fieldset>
-          <input id="fight" type="button" value="Fight!" />
-          <div id="output"></div>
+      <div id="combatants">
+
+      </div>
+      <input id="add" type="button" value="Add Combatant!" />
+      <fieldset>
+        <legend>Target location:</legend>
+      
+        <div>
+          <input type="radio" id="none" name="hit_location" value="none" checked />
+          <label for="none">None</label>
+        </div>
+        <div>
+          <input type="radio" id="head" name="hit_location" value="head" />
+          <label for="head">Head</label>
+        </div>
+        <div>
+          <input type="radio" id="torse" name="hit_location" value="torse" />
+          <label for="torse">Torso</label>
+        </div>
+        <div>
+            <input type="radio" id="rarm" name="hit_location" value="rarm" />
+            <label for="rarm">Right Arm</label>
+        </div>
+        <div>
+            <input type="radio" id="larm" name="hit_location" value="larm" />
+            <label for="larm">Left Arm</label>
+        </div>
+        <div>
+            <input type="radio" id="rleg" name="hit_location" value="rleg" />
+            <label for="rleg">Right Leg</label>
+        </div>
+        <div>
+            <input type="radio" id="lleg" name="hit_location" value="lleg" />
+            <label for="lleg">Left Leg</label>
+        </div>
+        
+      </fieldset>
+      <input id="fight" type="button" value="Fight!" />
+      <div id="output"></div>
 
   </form>
   <h2>To Do</h2>
@@ -70,6 +64,22 @@
       <li>Critical hit text</li>
       <li>Fumbles</li>
   </ul>
+</div>
+
+<div id="combatant_template">
+  <fieldset>
+    <legend>Combatant</legend>
+    <label for="abonus">Attacker bonus:</label><br>
+    <input type="text" id="abonus" name="abonus" value="17"><br>
+    <label for="damage">Damage:</label><br>
+    <input type="text" id="damage" name="damage" value="4d6+2"><br>
+    <label for="dbonus">Defender bonus:</label><br>
+    <input type="text" id="dbonus" name="dbonus" value="15"><br>
+    <label for="armor">Armor SP:</label><br>
+    <input type="text" id="armor" name="armor" value="11"><br>
+    <label for="hp">HP:</label><br>
+    <input type="text" id="hp" name="hp" value="40"><br>
+  </fieldset>
 </div>
 
 </body>

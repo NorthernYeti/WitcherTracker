@@ -12,20 +12,59 @@ var CritType = {
     Deadly: 4
 };
 
+var Outcome = {
+    Miss: 1,
+    Hit: 2,
+    Critical: 3
+};
+
+let combatant_count = 0;
 
 $(function () {
     $("#fight").on("click", function(){
-        Fight(
-            GetNumbericValue("#abonus"),
-            GetNumbericValue("#dbonus"),
-            GetNumbericValue("#armor"),
-            $('input[name="hit_location"]:checked').val()
-        );
+        PrepareFight();
+    });
+
+    $("#add").on("click", function(){
+        AddCombatant();
     });
 });
 
-function Fight(attackBonus, defenceBonus, armor, selectedLocation){
+function PrepareFight(){
+    if(attacker === undefined || defender === undefined){
+        alert('Pick attacker and defender');
+        return;
+    }
+
+    let attack_bonus =  GetNumbericValue(attacker.find('input[name="abonus"]'));
+    let defence_bonus =  GetNumbericValue(defender.find('input[name="dbonus"]'));
+    let armour = GetNumbericValue(defender.find('input[name="armor"]'));
+    let location = $('input[name="hit_location"]:checked').val();
+
+    let outcome;
+    
+    try {
+        outcome = Fight(attack_bonus, defence_bonus, armour, location);
+    } 
+    catch (error) {
+        console.error(error);
+    }  
+
     let $output = $("#output");
+    
+    if(outcome.outcome === Outcome.Miss)
+        $output.text("Miss!");
+    else if(outcome.damage > 0 ){
+        let hp = GetNumbericValue(defender.find('input[name="hp"]'));
+        defender.find('input[name="armor"]').val(armour - 1);
+        defender.find('input[name="hp"]').val(hp - outcome.damage);
+        $output.text(`Hit! ${outcome.damage} to ${outcome.location} on a ${outcome.attack_roll} roll.`);
+    }else{
+        $output.text(`Hit! No damage.`);
+    }
+}
+
+function Fight(attackBonus, defenceBonus, armor, selectedLocation){
 
     let locationDetails = undefined;
     let mod = 0;
@@ -47,16 +86,16 @@ function Fight(attackBonus, defenceBonus, armor, selectedLocation){
 
     //Is Attack above Defence?
     if(difference <= 0){
-        $output.empty();
-        $output.text("Miss!");
-        return;
+        return {
+            outcome: Outcome.Miss
+        }
     }
 
     //Critical hit check
     if(difference > 7){
-        let critical = ProcessCritical(difference, location)
-        damage += critical.damage;
-        location = critical.location;
+        // let critical = ProcessCritical(difference, location)
+        // damage += critical.damage;
+        // location = critical.location;
     }
 
     //Roll Weapon Damage
@@ -77,12 +116,11 @@ function Fight(attackBonus, defenceBonus, armor, selectedLocation){
     damage = Math.floor(damage * locationDetails.Damage);
 
     //At least 1 damage done
-    if(damage > 0 ){
-        $("#armor").val(armor - 1);
-        $("#hp").val(GetNumbericValue("#hp") - damage);
-        $output.text(`Hit! ${damage} to ${locationDetails.Location} on a ${attack} roll.`);
-    }else{
-        $output.text(`Hit! No damage.`);
+    return {
+        outcome: Outcome.Hit,
+        damage: damage,
+        location: locationDetails.Location,
+        attack_roll: attack
     }
 }
 
@@ -243,4 +281,37 @@ function ProcessCritical(difference, location){
 
 function GetCritDescription(location, critType){
     return "Ouch, that hurt!";
+}
+
+function AddCombatant(){
+    combatant_count++;
+    let html = $('#combatant_template').html();
+    let id = `combatant_${combatant_count}`;
+    $('#combatants').append(`<div id="${id}">${html}</div>`);
+    
+    $(`#${id}`).on("click", function(){
+        SelectCombatant($(this));
+    });
+}
+
+let attacker = undefined;
+let defender = undefined;
+
+function SelectCombatant(element){
+    
+    if(attacker === undefined){
+        attacker = element;
+        element.css("background-color", "green");
+    }
+    else if(defender === undefined){
+        defender = element;
+        element.css("background-color", "red");
+    }
+    else{
+        defender.css("background-color", "");
+        attacker.css("background-color", "");
+        attacker = element;
+        element.css("background-color", "green");
+        defender = undefined;
+    }
 }
