@@ -1,9 +1,13 @@
-const HeadLocation = "head";
-const TorsoLocation = "torse";
-const RightArmLocation = "rarm";
-const LeftArmLocation = "larm";
-const RightLegLocation = "rleg";
-const LeftLegLocation = "lleg";
+var Location = {
+    None: 0,
+    HeadLocation: 1,
+    TorsoLocation: 2,
+    RightArmLocation: 3,
+    LeftArmLocation: 4,
+    RightLegLocation: 5,
+    LeftLegLocation: 6,
+    TailWing: 7
+};
 
 var CritType = {
     Simple: 1,
@@ -39,7 +43,7 @@ function PrepareFight(){
     let attack_bonus =  GetNumbericValue(attacker.find('input[name="abonus"]'));
     let defence_bonus =  GetNumbericValue(defender.find('input[name="dbonus"]'));
     let armour = GetNumbericValue(defender.find('input[name="armor"]'));
-    let location = $('input[name="hit_location"]:checked').val();
+    let location = GetNumbericValue($("#hit_location").val());
 
     let outcome;
     
@@ -53,7 +57,7 @@ function PrepareFight(){
     let $output = $("#output");
     
     if(outcome.outcome === Outcome.Miss)
-        $output.text("Miss!");
+        $output.text(`Miss! ${MissDescriptions[Math.floor(Math.random() * MissDescriptions.length)]}`);
     else if(outcome.damage > 0 ){
         let hp = GetNumbericValue(defender.find('input[name="hp"]'));
         defender.find('input[name="armor"]').val(armour - 1);
@@ -77,7 +81,7 @@ function Fight(attackBonus, defenceBonus, armor, selectedLocation){
     let defence = rollExplodingDice(false);
 
     // Apply Skill and Mods
-    if(selectedLocation !== "none" && selectedLocation !== undefined){
+    if(selectedLocation !== Location.None && selectedLocation !== undefined){
         locationDetails = GetHitLocationValues(selectedLocation);
         mod = mod + locationDetails.Penalty;
     }
@@ -87,7 +91,7 @@ function Fight(attackBonus, defenceBonus, armor, selectedLocation){
     //Is Attack above Defence?
     if(difference <= 0){
         return {
-            outcome: Outcome.Miss
+            outcome: Outcome.Miss,
         }
     }
 
@@ -148,39 +152,39 @@ function RollWeaponDamage(){
 
 function GetHitLocationValues(selected) {
     switch (selected) {
-        case HeadLocation:
+        case Location.HeadLocation:
             return {
-                Location: HeadLocation,
+                Location: selected,
                 Penalty: -6,
                 Damage: 3
             };
-        case TorsoLocation:
+        case Location.TorsoLocation:
             return {
-                Location: TorsoLocation,
+                Location: selected,
                 Penalty: -1,
                 Damage: 1
             };
-        case RightArmLocation:
+        case Location.RightArmLocation:
             return {
-                Location: RightArmLocation,
+                Location: selected,
                 Penalty: -3,
                 Damage: 0.5
             };
-        case LeftArmLocation:
+        case Location.LeftArmLocation:
             return {
-                Location: LeftArmLocation,
+                Location: selected,
                 Penalty: -3,
                 Damage: 0.5
             };
-        case RightLegLocation:
+        case Location.RightLegLocation:
             return {
-                Location: RightLegLocation,
+                Location: selected,
                 Penalty: -2,
                 Damage: 0.5
             };
-        case LeftLegLocation:
+        case Location.LeftLegLocation:
             return {
-                Location: LeftLegLocation,
+                Location: selected,
                 Penalty: -2,
                 Damage: 0.5
             };
@@ -191,23 +195,23 @@ function DetermineRandomHumanHitLocation() {
     let randomLocation = rollDice("1d10").sum;
     switch (randomLocation) {
         case 1:
-            return HeadLocation;
+            return Location.HeadLocation;
         case 2:
         case 3:
         case 4:
-            return TorsoLocation;
+            return Location.TorsoLocation;
         case 5:
-            return RightArmLocation;
+            return Location.RightArmLocation;
         case 6:
-            return LeftArmLocation;
+            return Location.LeftArmLocation;
         case 7:
         case 8:
-            return RightLegLocation;
+            return Location.RightLegLocation;
         case 9:
         case 10:
-            return LeftLegLocation;
+            return Location.LeftLegLocation;
         default:
-            return TorsoLocation;
+            return Location.TorsoLocation;
     }
 }
 
@@ -287,9 +291,14 @@ function AddCombatant(){
     combatant_count++;
     let html = $('#combatant_template').html();
     let id = `combatant_${combatant_count}`;
-    $('#combatants').append(`<div id="${id}">${html}</div>`);
+    $('#combatants').append(`<div id="${id}" class="col-2">${html}</div>`);
     
-    $(`#${id}`).on("click", function(){
+    let $combatent = $(`#${id}`);
+
+    let name = $("#name").val();
+    $combatent.find('legend').text(name)
+
+    $combatent.on("click", function(){
         SelectCombatant($(this));
     });
 }
@@ -315,3 +324,13 @@ function SelectCombatant(element){
         defender = undefined;
     }
 }
+
+var MissDescriptions = [
+    "The blade glances off the enemy's armor, the sound of metal on metal echoing faintly.",
+    "Your attack sails wide, landing harmlessly on the floor.",
+    "The enemy dodges the attack with a swift movement, the blade passing just inches away.",
+    "The attack is blocked, the force of the blow absorbed by the enemy's shield.",
+    "The attack hits the wall, rebounding off the surface.",
+    "Your attempt is blocked by the enemy's shield.",
+    "Your attack is parried, bouncing harmlessly off the enemy's weapon."
+]
