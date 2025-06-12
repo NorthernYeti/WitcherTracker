@@ -43,12 +43,13 @@ function PrepareFight(){
     let attack_bonus =  GetNumbericValue(attacker.find('input[name="abonus"]'));
     let defence_bonus =  GetNumbericValue(defender.find('input[name="dbonus"]'));
     let armour = GetNumbericValue(defender.find('input[name="armor"]'));
-    let location = GetNumbericValue($("#hit_location").val());
+    let location = GetNumbericValue($("#hit_location"));
+    let roll = GetNumbericValue($("#attack_roll"));
 
     let outcome;
     
     try {
-        outcome = Fight(attack_bonus, defence_bonus, armour, location);
+        outcome = Fight(attack_bonus, defence_bonus, armour, location, roll);
     } 
     catch (error) {
         console.error(error);
@@ -68,7 +69,7 @@ function PrepareFight(){
     }
 }
 
-function Fight(attackBonus, defenceBonus, armor, selectedLocation){
+function Fight(attackBonus, defenceBonus, armor, selectedLocation, roll){
 
     let locationDetails = undefined;
     let mod = 0;
@@ -77,7 +78,7 @@ function Fight(attackBonus, defenceBonus, armor, selectedLocation){
     let description = "";
 
     //Roll attack and defence
-    let attack = rollExplodingDice(false);
+    let attack = roll == 0 ?  rollExplodingDice(false) : roll;
     let defence = rollExplodingDice(false);
 
     // Apply Skill and Mods
